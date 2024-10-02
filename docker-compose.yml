@@ -1,0 +1,50 @@
+version: "3.8"
+
+services:
+  db:
+    image: postgres:15
+    restart: always
+    environment:
+      POSTGRES_DB: test2
+      POSTGRES_USER: admin
+      POSTGRES_PASSWORD: admin
+    ports:
+      - "5432:5432"
+    volumes:
+      - db_data:/var/lib/postgresql/data
+    networks:
+      - my_network
+
+  test:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    networks:
+      - my_network
+    command: pytest
+
+  app:
+    build: .
+    restart: "no"  # Не перезапускаем контейнер после ошибки
+    ports:
+      - "8003:8003"
+    depends_on:
+      - db
+      - test
+    environment:
+      - POSTGRES__SCHEME=postgresql+asyncpg
+      - POSTGRES__USER=admin
+      - POSTGRES__PORT=5432
+      - POSTGRES__PASSWORD=admin
+      - POSTGRES__HOST=db
+      - POSTGRES__DB=test2
+    networks:
+      - my_network
+    command: sh -c "./entrypoint.sh"
+
+volumes:
+  db_data:
+
+networks:
+  my_network:
+    driver: bridge
