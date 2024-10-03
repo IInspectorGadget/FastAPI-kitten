@@ -40,7 +40,7 @@ services:
       - POSTGRES__DB=test2
     networks:
       - my_network
-    command: sh -c "./entrypoint.sh"
+    command: sh -c "./wait-for-it.sh db:5432 -- alembic upgrade head && if [ $? -eq 0 ]; then uvicorn src.application:app --host 0.0.0.0 --port 8003 --reload; else echo 'Alembic migration failed.' && exit 1; fi"
 
 volumes:
   db_data:

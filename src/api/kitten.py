@@ -9,7 +9,7 @@ from src.services.kitten import KittenService
 router = APIRouter(tags=['kittens'], prefix='/kittens')
 
 
-@router.get("/", response_model=List[KittenView])
+@router.get("/", response_model=List[KittenView], description="Получение списка всех котят с фильтром")
 async def list_kittens(
     breed_id: Optional[int] = Query(None, description="ID породы для фильтрации"),
     service: KittenService = Depends(service_factory.create_kitten_service)
@@ -17,7 +17,7 @@ async def list_kittens(
     return await service.list_kittens(breed_id)
 
 
-@router.get("/{kitten_id}", response_model=KittenView)
+@router.get("/{kitten_id}", response_model=KittenView, description="Получение информации о котёнке")
 async def get_kitten(
         kitten_id: int,
         service: KittenService = Depends(service_factory.create_kitten_service)
@@ -25,7 +25,7 @@ async def get_kitten(
     return await service.get_kitten_by_id(kitten_id)
 
 
-@router.post("/", response_model=KittenView)
+@router.post("/", response_model=KittenView, description="Добавление информации о котёнке")
 async def create_kitten(
         kitten: KittenCreate,
         service: KittenService = Depends(service_factory.create_kitten_service)
@@ -33,7 +33,7 @@ async def create_kitten(
     return await service.create_kitten(kitten)
 
 
-@router.put("/{kitten_id}", response_model=KittenView)
+@router.put("/{kitten_id}", response_model=KittenView, description="Изменение информации о котёнке")
 async def update_kitten(
     kitten_id: int,
     kitten_data: KittenUpdate,
@@ -42,7 +42,7 @@ async def update_kitten(
     return await service.update_kitten(kitten_id, kitten_data)
 
 
-@router.patch("/{kitten_id}", response_model=KittenView)
+@router.patch("/{kitten_id}", response_model=KittenView, description="Изменение информации о котёнке")
 async def patch_kitten(
     kitten_id: int,
     kitten_data: KittenPatch,
@@ -50,7 +50,8 @@ async def patch_kitten(
 ):
     return await service.patch_kitten(kitten_id, kitten_data)
 
-@router.delete("/{kitten_id}")
+
+@router.delete("/{kitten_id}", response_model=bool, description="Удаление информации о котёнке")
 async def delete_kitten(
     kitten_id: int,
     service: KittenService = Depends(service_factory.create_kitten_service)

@@ -16,7 +16,7 @@ class BreedRepository:
         self.view_model = BreedView
         self.model = Breed
 
-    async def get_all_breeds(self):
+    async def get_all_breeds(self) -> BreedView:
         async with self.session_factory() as session:
             query = select(self.model)
             result = await session.execute(query)
